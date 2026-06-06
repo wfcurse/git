@@ -1,11 +1,28 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+	"git/db"
+	"log"
+)
 
 func main() {
-	fmt.Println("Старт программы")
+	ctx := context.Background()
 
-	fmt.Println("Первый commit в main")
+	cfg := db.Config{
+		Host:     "localhost",
+		Port:     "5432",
+		User:     "postgres",
+		Password: "123",
+		Name:     "go_project_db",
+		SSLMode:  "disable",
+	}
 
-	fmt.Println("Первый commit в dev")
+	pool, err := db.Connect(ctx, cfg)
+	if err != nil {
+		log.Fatalf("Ошибка подключения %v", err)
+	}
+	defer pool.Close()
+	fmt.Println("Успешное подключение")
 }
