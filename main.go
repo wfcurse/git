@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"git/db"
+	sql "git/testSQL"
 	"log"
 )
 
@@ -25,4 +26,22 @@ func main() {
 	}
 	defer pool.Close()
 	fmt.Println("Успешное подключение")
+
+	if err := sql.CreateUsersTable(ctx, pool); err != nil {
+		log.Fatalf("Ошибка создания таблицы users: %v", err)
+	}
+
+	fmt.Println("Таблица users готова")
+
+	err = sql.CreateUsersTable(ctx, pool)
+	if err != nil {
+		log.Fatalf("Ошибка создания таблицы users: %v", err)
+	}
+
+	usersByID, err := sql.GetUsersByID(ctx, pool)
+	if err != nil {
+		log.Fatalf("Ошибка получения пользователей: %v", err)
+	}
+
+	fmt.Println(usersByID)
 }
