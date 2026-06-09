@@ -16,6 +16,8 @@ type User struct {
 }
 
 func CreateUsersTable(ctx context.Context, pool *pgxpool.Pool) error {
+
+	//запрос на создание таблицы
 	query := `
 		CREATE TABLE IF NOT EXISTS users (
 			id SERIAL PRIMARY KEY,
@@ -24,29 +26,33 @@ func CreateUsersTable(ctx context.Context, pool *pgxpool.Pool) error {
 			created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 		);
 	`
-
+	//этой строкой мы отправляем запрос в бд для создания таблицы, запрос храниться в переменной query
 	_, err := pool.Exec(ctx, query)
+
+	//возвращаем ошибку, если она есть
 	if err != nil {
 		return fmt.Errorf("create users table: %w", err)
 	}
-
+	//возвращаем 0, потому что ошибки нет
 	return nil
 }
 
 func GetUsers(ctx context.Context, pool *pgxpool.Pool) ([]User, error) {
 
+	//запрос на данные таблицы users
 	query := `
 		SELECT id, name, email, created_at
 		FROM users
 		ORDER BY id;
 	`
-
+	//передаем запрос в бд
 	rows, err := pool.Query(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("Получение из таблицы users - ошибка %w ", err)
 	}
 	defer rows.Close()
 
+	//создаем слайс users
 	users := make([]User, 0)
 
 	for rows.Next() {

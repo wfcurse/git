@@ -44,4 +44,9 @@ func main() {
 	}
 
 	fmt.Println(usersByID)
+
+	users, err := sql.GetUsers(ctx, pool)
+
+	fmt.Println(users[0])
+
 }
